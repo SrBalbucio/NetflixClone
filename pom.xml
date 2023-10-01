@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>app.netflix</groupId>
+    <artifactId>NetflixClone</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.holgerbrandl</groupId>
+            <artifactId>themoviedbapi</artifactId>
+            <version>1.15</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrBalbucio</groupId>
+            <artifactId>SQLAPI</artifactId>
+            <version>a54dec1fab</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrBalbucio</groupId>
+            <artifactId>BukkitConfiguration</artifactId>
+            <version>01c9cbc97c</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Milchreis</groupId>
+            <artifactId>UiBooster</artifactId>
+            <version>1.19.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrBalbucio</groupId>
+            <artifactId>EssentialJSwingLibrary</artifactId>
+            <version>6635f4c482</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrBalbucio</groupId>
+            <artifactId>GlassLibrary</artifactId>
+            <version>v1.0</version>
+        </dependency>
+
+        <!--
+Este projeto usa JavaFX para criar o WebView, utilize um JDK com suporte ao JFX.
+Para saber mais acesse: https://gluonhq.com/javafx
+-->
+        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-web -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-media -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>11</version>
+        </dependency>
+    </dependencies>
+
+</project>
