@@ -12,6 +12,7 @@ public class LoadView extends JPanel{
 
     private JImage logo;
     private JLabel progressBar;
+    private JLabel loadText;
 
     public LoadView(){
         this.setLayout(new GridBagLayout());
@@ -28,7 +29,12 @@ public class LoadView extends JPanel{
         progressBar.setPreferredSize(new Dimension(40, 40));
         content.add(new JPanelLambda(new FlowLayout(FlowLayout.CENTER)).addC(logo));
         content.add(new JPanelLambda(new FlowLayout(FlowLayout.CENTER)).addC(progressBar));
-        content.add(new JPanelLambda(new FlowLayout(FlowLayout.CENTER)).addC(new JLabel("Loading...")));
+        loadText = new JLabel("Loading...");
+        content.add(new JPanelLambda(new FlowLayout(FlowLayout.CENTER)).addC(loadText));
         this.add(content, new GridBagConstraints());
+    }
+
+    public void setLoadText(String text){
+        loadText.setText(text);
     }
 }

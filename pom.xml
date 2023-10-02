@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.SrBalbucio</groupId>
             <artifactId>SQLAPI</artifactId>
-            <version>a54dec1fab</version>
+            <version>648690c24e</version>
         </dependency>
         <dependency>
             <groupId>com.github.SrBalbucio</groupId>
@@ -51,6 +51,26 @@
             <groupId>com.github.SrBalbucio</groupId>
             <artifactId>GlassLibrary</artifactId>
             <version>v1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20230618</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrBalbucio</groupId>
+            <artifactId>ResponsiveScheduler</artifactId>
+            <version>v1.0.5</version>
         </dependency>
 
         <!--

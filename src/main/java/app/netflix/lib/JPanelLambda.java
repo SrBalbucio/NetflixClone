@@ -12,8 +12,12 @@ public class JPanelLambda extends JPanel {
     }
 
     public JPanelLambda(LayoutManager layout) {
+        this(layout, Color.BLACK);
+    }
+
+    public JPanelLambda(LayoutManager layout, Color background) {
         super(layout);
-        this.setBackground(Color.BLACK);
+        this.setBackground(background);
     }
 
     public JPanelLambda(boolean isDoubleBuffered) {
