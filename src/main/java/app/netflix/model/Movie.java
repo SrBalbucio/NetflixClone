@@ -41,7 +41,6 @@ public class Movie {
     }
 
     public Image getPosterImage() {
-        System.out.println(poster);
         File imgFile = new File("cache"+poster);
         imgFile.getParentFile().mkdirs();
         if(!imgFile.exists()) {

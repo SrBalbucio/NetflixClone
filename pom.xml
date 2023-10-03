@@ -72,6 +72,21 @@
             <artifactId>ResponsiveScheduler</artifactId>
             <version>v1.0.5</version>
         </dependency>
+        <dependency>
+            <groupId>net.sourceforge.argparse4j</groupId>
+            <artifactId>argparse4j</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SrBalbucio</groupId>
+            <artifactId>Discord-OAuth2-API</artifactId>
+            <version>v1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.JnCrMx</groupId>
+            <artifactId>discord-game-sdk4j</artifactId>
+            <version>v0.5.5</version>
+        </dependency>
 
         <!--
 Este projeto usa JavaFX para criar o WebView, utilize um JDK com suporte ao JFX.
@@ -81,25 +96,25 @@ Para saber mais acesse: https://gluonhq.com/javafx
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>11</version>
+            <version>20</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>11</version>
+            <version>20</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-web -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>11</version>
+            <version>20</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-media -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>11</version>
+            <version>20</version>
         </dependency>
     </dependencies>
 

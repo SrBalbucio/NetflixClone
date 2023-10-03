@@ -1,5 +1,6 @@
 package app.netflix.manager;
 
+import app.netflix.AppInfo;
 import app.netflix.Main;
 import app.netflix.model.Genre;
 import app.netflix.model.Movie;
@@ -66,7 +67,6 @@ public class MovieManager {
                 });
             }
         } catch (Exception e){}
-        System.out.println(popularToday.size());
     }
 
     public void discoverNewMovies(Genre genre) {
