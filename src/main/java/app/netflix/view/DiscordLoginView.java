@@ -15,18 +15,20 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import lombok.Data;
 import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
+@Data
 public class DiscordLoginView extends JPanel {
     private Stage stage;
     private WebView browser;
     private JFXPanel jfxPanel;
     @Getter
-    private boolean isFinished = false;
+    public boolean isFinished = false;
 
     private int w, h;
     public DiscordLoginView(){
@@ -94,6 +96,7 @@ public class DiscordLoginView extends JPanel {
             AppInfo.ACCOUNT = Main.accountManager.loadUser(user);
             Main.setConfig("loggedId", user.getId());
             isFinished = true;
+            Main.window.loadMainView();
         } catch (Exception e){
             e.printStackTrace();
             Main.window.getLoadView().setLoadText("Ops... It looks like your login via Discord went wrong.");

@@ -1,6 +1,7 @@
 package app.netflix.manager;
 
 import app.netflix.Main;
+import app.netflix.model.Movie;
 import balbucio.sqlapi.model.ConditionValue;
 import balbucio.sqlapi.model.Conditional;
 import balbucio.sqlapi.model.Operator;
@@ -28,4 +29,10 @@ public class WatchManager {
         return movies;
     }
 
+    public List<Movie> getWatchedMovies(String userid){
+        List<Movie> movies = new ArrayList<>();
+        sqlite.getAllValuesFromColumns("watched", new ConditionValue[]{ new ConditionValue("userid", Conditional.EQUALS, userid, Operator.NULL)})
+                .forEach(r -> movies.add(Main.movieManager.getMovie(r.asInt("movieid"))));
+        return movies;
+    }
 }

@@ -5,10 +5,9 @@ import app.netflix.Icons;
 import app.netflix.Main;
 import app.netflix.lib.CardCellRenderer;
 import app.netflix.lib.JPanelLambda;
-import app.netflix.lib.JScrollable;
 import app.netflix.listener.MouseListListener;
-import app.netflix.listener.WheelListener;
 import app.netflix.manager.MovieManager;
+import app.netflix.manager.WatchManager;
 import app.netflix.model.Genre;
 import app.netflix.model.Movie;
 import balbucio.org.ejsl.component.JImage;
@@ -16,15 +15,16 @@ import balbucio.org.ejsl.component.panel.JCornerPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainView extends JPanel {
+public class ListaView extends JPanel {
 
     private Dimension dimension = new Dimension();
     private ArrayList<JScrollPane> scrolls = new ArrayList<>();
@@ -33,7 +33,7 @@ public class MainView extends JPanel {
     private Color SECOND_COLOR = new Color(17, 24, 37, 255);
     private JScrollPane scroll;
 
-    public MainView() {
+    public ListaView() {
         this.setVisible(false);
         this.setLayout(new BorderLayout());
         JPanel left = getLeft();
@@ -100,12 +100,18 @@ public class MainView extends JPanel {
             homep.add(homeIcon);
             JLabel homeLabel = new JLabel("Home");
             homeLabel.setFont(homeLabel.getFont().deriveFont(16f));
-            homeLabel.setForeground(Color.WHITE);
+            homeLabel.setForeground(Color.GRAY);
             homep.add(homeLabel);
             options.add(homep);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
             space.setPreferredSize(new Dimension(10,15));
             options.add(space);
+            homep.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Main.window.show("HOME");
+                }
+            });
         }
 
         {
@@ -140,18 +146,12 @@ public class MainView extends JPanel {
             listp.add(listaIcon);
             JLabel listaLabel = new JLabel("Sua lista");
             listaLabel.setFont(listaLabel.getFont().deriveFont(16f));
-            listaLabel.setForeground(Color.GRAY);
+            listaLabel.setForeground(Color.WHITE);
             listp.add(listaLabel);
             options.add(listp);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
             space.setPreferredSize(new Dimension(10,15));
             options.add(space);
-            listp.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    Main.window.show("LISTA");
-                }
-            });
         }
 
         JPanel capsulaOptions = new JPanel(new BorderLayout());
@@ -163,7 +163,7 @@ public class MainView extends JPanel {
         return content;
     }
 
-    DefaultListModel<Movie> popularesModel = new DefaultListModel<>();
+    DefaultListModel<Movie> listaModel = new DefaultListModel<>();
     DefaultListModel<Movie> watchedModel = new DefaultListModel<>();
     DefaultListModel<Movie> favoritedModel = new DefaultListModel<>();
     Map<Genre, DefaultListModel<Movie>> genreList = new HashMap<>();
@@ -195,52 +195,6 @@ public class MainView extends JPanel {
         center.add(searchCorner, new GridBagConstraints());
         searchPanel.add(center, BorderLayout.CENTER);
 
-        /**
-         searchPanel.setBackground(new Color(23,30,42,255));
-         JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-         flow.setBackground(new Color(23,30,42,255));
-         JImage seIcon = new JImage(Icons.SEARCH);
-         seIcon.setMaxSize(true);
-         seIcon.setCenter(true);
-         seIcon.setPreferredSize(new Dimension(24, 24));
-         seIcon.setBackground(new Color(23,30,42,255));
-         flow.add(seIcon);
-         JTextField searchField = new JTextField();
-         searchField.setBorder(new EmptyBorder(0,0,0,0));
-         searchField.setPreferredSize(new Dimension(400, 48));
-         searchField.setBackground(new Color(23,30,42,255));
-         flow.add(searchField);
-         searchPanel.add(flow);
-         **/
-
-        /**
-         JPanel searchPanel =  new JPanel(new GridBagLayout());
-         searchPanel.setBackground(SECOND_COLOR);
-
-         JPanel searchContent = new JPanel(new BorderLayout());
-         searchPanel.setBorder(new EmptyBorder(10,10,10,150));
-         searchContent.setBackground(SECOND_COLOR);
-
-         JCornerPanel corner = new JCornerPanel(new Color(23,30,42,255), 30);
-         corner.setPreferredSize(new Dimension(480, 64));
-         corner.setBorder(new EmptyBorder(10,10,10,10));
-         corner.setLayout(new FlowLayout(FlowLayout.CENTER));
-         JImage seIcon = new JImage(Icons.SEARCH);
-         seIcon.setMaxSize(true);
-         seIcon.setCenter(true);
-         seIcon.setPreferredSize(new Dimension(24, 24));
-         seIcon.setBackground(new Color(23,30,42,255));
-         corner.add(seIcon);
-         JTextField searchField = new JTextField();
-         searchField.setBorder(new EmptyBorder(0,0,0,0));
-         searchField.setPreferredSize(new Dimension(400, 48));
-         searchField.setBackground(new Color(23,30,42,255));
-         corner.add(searchField);
-         searchContent.add(corner, BorderLayout.WEST);
-
-         searchPanel.add(searchContent, new GridBagConstraints());
-         **/
-
         content.add(searchPanel, BorderLayout.NORTH);
 
         JPanel conteudo = new JPanel();
@@ -249,49 +203,51 @@ public class MainView extends JPanel {
         BoxLayout box = new BoxLayout(conteudo, BoxLayout.Y_AXIS);
         conteudo.setLayout(box);
 
-        JPanel lp1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        lp1.setBackground(SECOND_COLOR);
-        lp1.setBorder(new EmptyBorder(3, 3, 3, 3));
-        JLabel l1 = new JLabel("Filmes populares hoje:");
-        l1.setBackground(SECOND_COLOR);
-        l1.setFont(l1.getFont().deriveFont(18f));
-        lp1.add(l1);
-        conteudo.add(lp1);
+        {
+            JPanel lp1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            lp1.setBackground(SECOND_COLOR);
+            lp1.setBorder(new EmptyBorder(3, 3, 3, 3));
+            JLabel l1 = new JLabel("Seu histórico:");
+            l1.setBackground(SECOND_COLOR);
+            l1.setFont(l1.getFont().deriveFont(18f));
+            lp1.add(l1);
+            conteudo.add(lp1);
 
-        JList<Movie> populares = new JList<>(popularesModel);
-        MouseListListener listener = new MouseListListener(populares);
-        listener.setConsumer((o) -> { return movieManager.getMoviesAndExclude(null, o); });
-        mouseListeners.add(listener);
-        populares.addMouseListener(listener);
-        populares.addMouseMotionListener(listener);
-        populares.setBorder(new EmptyBorder(0, 0, 0, 0));
-        populares.setBackground(SECOND_COLOR);
-        populares.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        populares.setVisibleRowCount(1);
-        populares.setCellRenderer(new CardCellRenderer());
-        genreJList.put(new Genre(-1, "Populares"), populares);
+            JList<Movie> populares = new JList<>(listaModel);
+            MouseListListener listener = new MouseListListener(populares);
+            listener.setConsumer((o) -> { return movieManager.getMoviesAndExclude(null, o); });
+            mouseListeners.add(listener);
+            populares.addMouseListener(listener);
+            populares.addMouseMotionListener(listener);
+            populares.setBorder(new EmptyBorder(0, 0, 0, 0));
+            populares.setBackground(SECOND_COLOR);
+            populares.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+            populares.setVisibleRowCount(1);
+            populares.setCellRenderer(new CardCellRenderer());
+            genreJList.put(new Genre(-2, "Lista"), populares);
 
-        JScrollPane scrollPop = new JScrollPane(populares);
-        listener.setScroll(scrollPop);
-        scrollPop.getHorizontalScrollBar().setUnitIncrement(16);
-        scrollPop.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPop.addMouseWheelListener(e -> {
-            Point p = scroll.getViewport().getViewPosition();
-            p.y += (10 * e.getUnitsToScroll());
-            if (p.y >= 0) {
-                scroll.getViewport().setViewPosition(p);
-            } else {
-                p.y = 0;
-                scroll.getViewport().setViewPosition(p);
-            }
-        });
-        scrollPop.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPop.setBorder(new EmptyBorder(0, 0, 0, 0));
-        scrollPop.setBackground(SECOND_COLOR);
-        scrolls.add(scrollPop);
+            JScrollPane scrollPop = new JScrollPane(populares);
+            listener.setScroll(scrollPop);
+            scrollPop.getHorizontalScrollBar().setUnitIncrement(16);
+            scrollPop.getVerticalScrollBar().setUnitIncrement(16);
+            scrollPop.addMouseWheelListener(e -> {
+                Point p = scroll.getViewport().getViewPosition();
+                p.y += (10 * e.getUnitsToScroll());
+                if (p.y >= 0) {
+                    scroll.getViewport().setViewPosition(p);
+                } else {
+                    p.y = 0;
+                    scroll.getViewport().setViewPosition(p);
+                }
+            });
+            scrollPop.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPop.setBorder(new EmptyBorder(0, 0, 0, 0));
+            scrollPop.setBackground(SECOND_COLOR);
+            scrolls.add(scrollPop);
 
-        conteudo.add(scrollPop);
-        conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
+            conteudo.add(scrollPop);
+            conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
+        }
 
         /**
          JList<Movie> watched = new JList<>(watchedModel);
@@ -316,9 +272,13 @@ public class MainView extends JPanel {
     }
 
     private MovieManager movieManager = Main.movieManager;
+    private WatchManager watchManager = Main.watchManager;
 
     private void loadModels(JPanel conteudo) {
-        movieManager.getPopularToday().forEach(m -> popularesModel.addElement(m));
+        watchManager.getWatchedMovies(AppInfo.ACCOUNT.getId()).forEach(m -> {
+            listaModel.addElement(m);
+        });
+        /**
         movieManager.getGenries().forEach(g -> {
             DefaultListModel<Movie> mg = new DefaultListModel<>();
             movieManager.getMovies(g).forEach(mg::addElement);
@@ -335,7 +295,6 @@ public class MainView extends JPanel {
 
             JList<Movie> genreList = new JList<>(mg);
             MouseListListener listener = new MouseListListener(genreList);
-            listener.setConsumer((o) -> { return movieManager.getMoviesAndExclude(g, o); });
             mouseListeners.add(listener);
             genreList.addMouseListener(listener);
             genreList.addMouseMotionListener(listener);
@@ -370,6 +329,6 @@ public class MainView extends JPanel {
             conteudo.add(genreScroll);
             conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
         });
+         **/
     }
-
 }

@@ -1,6 +1,5 @@
 package app.netflix.manager;
 
-import app.netflix.AppInfo;
 import app.netflix.Main;
 import app.netflix.model.Genre;
 import app.netflix.model.Movie;
@@ -9,15 +8,21 @@ import balbucio.responsivescheduler.ResponsiveScheduler;
 import balbucio.sqlapi.model.ConditionValue;
 import balbucio.sqlapi.model.Conditional;
 import balbucio.sqlapi.model.Operator;
+import balbucio.sqlapi.model.ResultValue;
 import balbucio.sqlapi.sqlite.HikariSQLiteInstance;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.model.Discover;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import lombok.Getter;
 import org.json.JSONObject;
+
+import javax.xml.transform.Result;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MovieManager {
 
@@ -119,17 +124,41 @@ public class MovieManager {
 
     public List<Movie> getMoviesAndExclude(Genre genre, List<Movie> toExclude) {
         List<Movie> movies = new ArrayList<>();
-        ConditionValue[] cv = new ConditionValue[toExclude.size() + 1];
-        cv[0] = new ConditionValue("genre", Conditional.EQUALS, genre.getId(), Operator.NULL);
-        for (int i = 1; i < cv.length; i++) {
-            cv[i] = new ConditionValue("id", Conditional.EQUALS, toExclude.get(i).getId(), Operator.NOT);
-        }
-        sqlite.getAllValuesFromColumns("movies", cv).forEach(r -> {
-            if (movies.size() <= 2) {
-                movies.add(new Movie(r.asInt("id"), r.asString("name"), r.asString("description"), r.asInt("genre"), Float.parseFloat(String.valueOf(r.get("popularity"))), r.asString("poster"), r.asString("backdrop"), r.asString("data")));
+        try {
+            Statement statement = sqlite.getStatement();
+            StringBuilder builder = new StringBuilder();
+            builder.append("SELECT * FROM movies WHERE genre = '"+ (genre != null ? genre.getId() : getGenries().stream().findFirst().get().getId())+ "' ");
+            for(Movie m : toExclude){
+                builder.append("AND id != '"+m.getId()+"' ");
             }
-        });
+            builder.append(";");
+            ResultSet set = statement.executeQuery(builder.toString());
+            while (set.next()){
+                if (movies.size() <= 10) {
+                    movies.add(new Movie(set.getInt("id"),
+                            set.getString("name"),
+                            set.getString("description"),
+                            set.getInt("genre"),
+                            set.getFloat("popularity"),
+                            set.getString("poster"),
+                            set.getString("backdrop"),
+                            set.getString("data")));
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return movies;
+    }
+
+    public Movie getMovie(int id){
+        AtomicReference<Movie> m = new AtomicReference<>(new Movie());
+        sqlite.getAllValuesFromColumns("movies", new ConditionValue[]{
+                new ConditionValue("id", Conditional.EQUALS, id, Operator.NULL)
+        }).stream().findFirst().ifPresent(r -> {
+            m.set(new Movie(r.asInt("id"), r.asString("name"), r.asString("description"), r.asInt("genre"), Float.parseFloat(String.valueOf(r.get("popularity"))), r.asString("poster"), r.asString("backdrop"), r.asString("data")));
+        });
+        return m.get();
     }
 
     public List<Genre> getGenries() {

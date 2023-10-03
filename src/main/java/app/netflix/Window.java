@@ -1,5 +1,6 @@
 package app.netflix;
 
+import app.netflix.view.ListaView;
 import app.netflix.view.LoadView;
 import app.netflix.view.MainView;
 import balbucio.glasslibrary.GlassFrame;
@@ -18,6 +19,8 @@ public class Window extends GlassFrame {
     @Getter
     private MainView mainView;
     @Getter
+    private ListaView listaView;
+    @Getter
     private JPanel content;
 
     public Window() {
@@ -35,7 +38,9 @@ public class Window extends GlassFrame {
 
     public void loadMainView() {
         mainView = new MainView();
+        listaView = new ListaView();
         content.add(mainView, "HOME");
+        content.add(listaView, "LISTA");
         loadView.setVisible(false);
         show("HOME");
     }

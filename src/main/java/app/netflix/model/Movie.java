@@ -3,6 +3,7 @@ package app.netflix.model;
 import balbucio.org.ejsl.utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
@@ -16,6 +17,7 @@ import java.net.URL;
 
 @AllArgsConstructor
 @Data
+@NoArgsConstructor
 public class Movie {
 
     private int id;
@@ -64,7 +66,7 @@ public class Movie {
     public Image getBackdropImage() {
         File imgFile = new File("cache"+backdrop);
         if(!imgFile.exists()) {
-            try (BufferedInputStream in = new BufferedInputStream(new URL("https://image.tmdb.org/t/p/w200" + backdrop).openStream())) {
+            try (BufferedInputStream in = new BufferedInputStream(new URL("https://image.tmdb.org/t/p/original" + backdrop).openStream())) {
 
                 FileOutputStream fileOutputStream = new FileOutputStream(imgFile);
                 byte dataBuffer[] = new byte[1024];

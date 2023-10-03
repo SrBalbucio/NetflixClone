@@ -1,7 +1,9 @@
 package app.netflix.lib;
 
 import app.netflix.AppInfo;
+import app.netflix.Main;
 import app.netflix.model.Movie;
+import app.netflix.view.MovieView;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.utils.ImageUtils;
 import lombok.Data;
@@ -29,6 +31,11 @@ public class CardCellRenderer implements ListCellRenderer<Movie> {
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Movie> list, Movie value, int index, boolean isSelected, boolean cellHasFocus) {
+        if(isSelected && list.getCursor() != AppInfo.LEFT_CURSOR && list.getCursor() != AppInfo.RIGHT_CURSOR){
+            list.clearSelection();
+            Main.window.getContent().add(new MovieView(value), String.valueOf(value.getId()));
+            Main.window.show(String.valueOf(value.getId()));
+        }
         JPanel panel = new JPanel(new BorderLayout());
         try {
             if (list.isShowing()) {

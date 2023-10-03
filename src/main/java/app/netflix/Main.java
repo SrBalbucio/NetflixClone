@@ -80,7 +80,7 @@ public class Main {
 
         window = new Window();
 
-        loadDiscordRPC();
+        //loadDiscordRPC();
 
         movieManager.loadAll();
 
@@ -129,23 +129,25 @@ public class Main {
     public static Core discordCore;
 
     public void loadDiscordRPC() throws IOException {
-        window.getLoadView().setLoadText("Loading native libraries and trying to connect you automatically...");
-        Core.initFromClasspath();
-        CreateParams params = new CreateParams();
-        params.setClientID(Long.parseLong(config.getString("discordClient")));
-        params.setFlags(CreateParams.Flags.DEFAULT);
-        params.registerEventHandler(new DiscordEventAdapter()
-        {
-            @Override
-            public void onCurrentUserUpdate()
-            {
-                AppInfo.LOGGED = true;
-                DiscordUser currentUser = discordCore.userManager().getCurrentUser();
-                accountManager.loadUser(currentUser);
-                System.out.println("Atualizado!");
-            }
-        });
-        discordCore = new Core(params);
+        try {
+            window.getLoadView().setLoadText("Loading native libraries and trying to connect you automatically...");
+            Core.initFromClasspath();
+            CreateParams params = new CreateParams();
+            params.setClientID(Long.parseLong(config.getString("discordClient")));
+            params.setFlags(CreateParams.Flags.DEFAULT);
+            params.registerEventHandler(new DiscordEventAdapter() {
+                @Override
+                public void onCurrentUserUpdate() {
+                    AppInfo.LOGGED = true;
+                    DiscordUser currentUser = discordCore.userManager().getCurrentUser();
+                    accountManager.loadUser(currentUser);
+                    System.out.println("Atualizado!");
+                }
+            });
+            discordCore = new Core(params);
+        } catch (Exception e ){
+            e.printStackTrace();
+        }
     }
 
     public static void setConfig(String key, Object obj){
