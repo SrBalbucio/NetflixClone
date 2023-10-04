@@ -20,6 +20,8 @@ import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 @Data
@@ -50,6 +52,7 @@ public class DiscordLoginView extends JPanel {
 
             browser = new WebView();
             browser.getEngine().setJavaScriptEnabled(true);
+            browser.getEngine().setUserDataDirectory(new File("browser"));
             browser.getEngine().load(Main.discordOAuth.getAuthorizationURL("netflixclone"));
             browser.getEngine().getLoadWorker().stateProperty().addListener((observableValue, state, t1) -> {
                 if (state == Worker.State.SCHEDULED || state == Worker.State.RUNNING || state == Worker.State.READY) {

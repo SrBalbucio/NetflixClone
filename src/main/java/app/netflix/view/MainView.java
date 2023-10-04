@@ -13,6 +13,7 @@ import app.netflix.model.Genre;
 import app.netflix.model.Movie;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.component.panel.JCornerPanel;
+import balbucio.org.ejsl.utils.ImageUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -26,7 +27,6 @@ import java.util.Map;
 
 public class MainView extends JPanel {
 
-    private Dimension dimension = new Dimension();
     private ArrayList<JScrollPane> scrolls = new ArrayList<>();
     private ArrayList<MouseListListener> mouseListeners = new ArrayList<>();
     private Color FIRST_COLOR = new Color(18, 18, 29, 255);
@@ -126,6 +126,12 @@ public class MainView extends JPanel {
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
             space.setPreferredSize(new Dimension(10,15));
             options.add(space);
+            foryoup.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Main.window.show("FORYOU");
+                }
+            });
         }
 
         {
@@ -158,7 +164,8 @@ public class MainView extends JPanel {
         capsulaOptions.setBackground(FIRST_COLOR);
         capsulaOptions.add(options, BorderLayout.NORTH);
         content.add(capsulaOptions, BorderLayout.CENTER);
-        content.add(new JPanel(), BorderLayout.SOUTH);
+        JPanel acc = new JPanel(new GridBagLayout());
+        content.add(acc, BorderLayout.SOUTH);
 
         return content;
     }
@@ -194,52 +201,6 @@ public class MainView extends JPanel {
         searchCorner.add(searchField);
         center.add(searchCorner, new GridBagConstraints());
         searchPanel.add(center, BorderLayout.CENTER);
-
-        /**
-         searchPanel.setBackground(new Color(23,30,42,255));
-         JPanel flow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-         flow.setBackground(new Color(23,30,42,255));
-         JImage seIcon = new JImage(Icons.SEARCH);
-         seIcon.setMaxSize(true);
-         seIcon.setCenter(true);
-         seIcon.setPreferredSize(new Dimension(24, 24));
-         seIcon.setBackground(new Color(23,30,42,255));
-         flow.add(seIcon);
-         JTextField searchField = new JTextField();
-         searchField.setBorder(new EmptyBorder(0,0,0,0));
-         searchField.setPreferredSize(new Dimension(400, 48));
-         searchField.setBackground(new Color(23,30,42,255));
-         flow.add(searchField);
-         searchPanel.add(flow);
-         **/
-
-        /**
-         JPanel searchPanel =  new JPanel(new GridBagLayout());
-         searchPanel.setBackground(SECOND_COLOR);
-
-         JPanel searchContent = new JPanel(new BorderLayout());
-         searchPanel.setBorder(new EmptyBorder(10,10,10,150));
-         searchContent.setBackground(SECOND_COLOR);
-
-         JCornerPanel corner = new JCornerPanel(new Color(23,30,42,255), 30);
-         corner.setPreferredSize(new Dimension(480, 64));
-         corner.setBorder(new EmptyBorder(10,10,10,10));
-         corner.setLayout(new FlowLayout(FlowLayout.CENTER));
-         JImage seIcon = new JImage(Icons.SEARCH);
-         seIcon.setMaxSize(true);
-         seIcon.setCenter(true);
-         seIcon.setPreferredSize(new Dimension(24, 24));
-         seIcon.setBackground(new Color(23,30,42,255));
-         corner.add(seIcon);
-         JTextField searchField = new JTextField();
-         searchField.setBorder(new EmptyBorder(0,0,0,0));
-         searchField.setPreferredSize(new Dimension(400, 48));
-         searchField.setBackground(new Color(23,30,42,255));
-         corner.add(searchField);
-         searchContent.add(corner, BorderLayout.WEST);
-
-         searchPanel.add(searchContent, new GridBagConstraints());
-         **/
 
         content.add(searchPanel, BorderLayout.NORTH);
 
@@ -293,14 +254,6 @@ public class MainView extends JPanel {
         conteudo.add(scrollPop);
         conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
 
-        /**
-         JList<Movie> watched = new JList<>(watchedModel);
-         watched.setCellRenderer(new CardCellRenderer());
-
-         JList<Movie> favorited = new JList<>(favoritedModel);
-         favorited.setCellRenderer(new CardCellRenderer());
-         **/
-
         loadModels(conteudo);
 
         scroll = new JScrollPane(conteudo);
@@ -311,7 +264,6 @@ public class MainView extends JPanel {
         scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         content.add(scroll);
-        // outras listas
         return content;
     }
 

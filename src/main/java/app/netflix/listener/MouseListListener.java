@@ -70,7 +70,6 @@ public class MouseListListener implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println("d");
     }
 
     @Override

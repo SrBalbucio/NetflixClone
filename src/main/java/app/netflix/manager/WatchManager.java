@@ -15,7 +15,7 @@ public class WatchManager {
     private HikariSQLiteInstance sqlite = Main.sqlite;
 
     public WatchManager(){
-        sqlite.createTable("watched", "userid VARCHAR(255) PRIMARY KEY, movieid INTEGER(255)");
+        sqlite.createTable("watched", "userid VARCHAR(255), movieid INTEGER(255) UNIQUE");
     }
 
     public void addWatched(String userid, String movieid){
@@ -25,14 +25,20 @@ public class WatchManager {
     public List<Integer> getWatched(String userid){
         List<Integer> movies = new ArrayList<>();
         sqlite.getAllValuesFromColumns("watched", new ConditionValue[]{ new ConditionValue("userid", Conditional.EQUALS, userid, Operator.NULL)})
-                .forEach(r -> movies.add(r.asInt("movieid")));
+                .forEach(r -> {
+                    movies.add(r.asInt("movieid"));
+                });
         return movies;
     }
 
     public List<Movie> getWatchedMovies(String userid){
+        System.out.println(userid);
         List<Movie> movies = new ArrayList<>();
         sqlite.getAllValuesFromColumns("watched", new ConditionValue[]{ new ConditionValue("userid", Conditional.EQUALS, userid, Operator.NULL)})
-                .forEach(r -> movies.add(Main.movieManager.getMovie(r.asInt("movieid"))));
+                .forEach(r -> {
+                    Movie m = Main.movieManager.getMovie(r.asInt("movieid"));
+                    movies.add(m);
+                });
         return movies;
     }
 }

@@ -3,24 +3,22 @@ package app.netflix.view;
 import app.netflix.AppInfo;
 import app.netflix.Icons;
 import app.netflix.Main;
-import app.netflix.lib.CardCellRenderer;
 import app.netflix.lib.JPanelLambda;
-import app.netflix.manager.WatchManager;
 import app.netflix.model.Movie;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.component.panel.JCornerPanel;
 import balbucio.org.ejsl.utils.ImageUtils;
+import javafx.scene.media.Media;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.xml.crypto.dsig.Transform;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Random;
 
 public class MovieView extends JPanel {
 
@@ -133,6 +131,7 @@ public class MovieView extends JPanel {
         return content;
     }
 
+    private boolean isPlayed = false;
 
     public JPanel getCenter(){
         System.out.println(this.getHeight());
@@ -222,13 +221,41 @@ public class MovieView extends JPanel {
 
             {
                 JCornerPanel assistir = new JCornerPanel(Color.RED, 20);
+                assistir.setPreferredSize(new Dimension(200, 32));
                 assistir.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        Main.watchManager.addWatched(AppInfo.ACCOUNT.getId(), String.valueOf(movie.getId()));
+                        if(!isPlayed) {
+                            Random random = new Random();
+                            Main.watchManager.addWatched(AppInfo.ACCOUNT.getId(), String.valueOf(movie.getId()));
+                            int i = 4;
+                            for (int i1 = 1; i1 < i; i1++) {
+                                File trailer = new File("trailer0" + i1 + ".mp4");
+                                if (!trailer.exists()) {
+                                    try {
+                                        Files.copy(this.getClass().getResourceAsStream("/trailer/trailer0" + i1 + ".mp4"), trailer.toPath());
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
+                            int iv = random.nextInt(4);
+                            if (iv < 2) {
+                                iv = 2;
+                            }
+                            PlayerView view = new PlayerView(new Media(new File("trailer0" + iv + ".mp4").toURI().toString()), () -> {
+                                Main.window.show(movie.getName());
+                                assistir.setBackground(Color.RED);
+                            }, () -> {
+                                Main.window.show(movie.getName());
+                            });
+                            isPlayed = true;
+                            Main.window.getContent().add(view, movie.getName());
+                            assistir.setBackground(Color.DARK_GRAY);
+                        }
                     }
                 });
-                assistir.setLayout(new FlowLayout(FlowLayout.LEFT));
+                assistir.setLayout(new FlowLayout(FlowLayout.CENTER));
                 JImage backIcon = new JImage(Icons.PLAY);
                 backIcon.setCenter(true);
                 backIcon.setPreferredSize(new Dimension(24, 24));

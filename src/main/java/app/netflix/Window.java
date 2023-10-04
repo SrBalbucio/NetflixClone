@@ -1,15 +1,15 @@
 package app.netflix;
 
-import app.netflix.view.ListaView;
-import app.netflix.view.LoadView;
-import app.netflix.view.MainView;
+import app.netflix.view.*;
 import balbucio.glasslibrary.GlassFrame;
 import balbucio.org.ejsl.utils.ImageUtils;
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
 import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Window extends GlassFrame {
 
@@ -20,6 +20,8 @@ public class Window extends GlassFrame {
     private MainView mainView;
     @Getter
     private ListaView listaView;
+    @Getter
+    private ForYouView forYouView;
     @Getter
     private JPanel content;
 
@@ -39,10 +41,17 @@ public class Window extends GlassFrame {
     public void loadMainView() {
         mainView = new MainView();
         listaView = new ListaView();
+        forYouView = new ForYouView();
         content.add(mainView, "HOME");
         content.add(listaView, "LISTA");
-        loadView.setVisible(false);
-        show("HOME");
+        content.add(forYouView, "FORYOU");
+        PlayerView view = new PlayerView(new Media(new File("trailer01.mp4").toURI().toString()), () -> {
+            Main.window.show("HOME");
+            Main.allLoaded = true;
+        }, () -> {
+          show("NETFLIXLOAD");
+        });
+        content.add(view, "NETFLIXLOAD");
     }
 
     public void show(String page) {

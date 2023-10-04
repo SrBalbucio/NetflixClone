@@ -26,7 +26,6 @@ import java.util.Map;
 
 public class ListaView extends JPanel {
 
-    private Dimension dimension = new Dimension();
     private ArrayList<JScrollPane> scrolls = new ArrayList<>();
     private ArrayList<MouseListListener> mouseListeners = new ArrayList<>();
     private Color FIRST_COLOR = new Color(18, 18, 29, 255);
@@ -104,7 +103,7 @@ public class ListaView extends JPanel {
             homep.add(homeLabel);
             options.add(homep);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
             homep.addMouseListener(new MouseAdapter() {
                 @Override
@@ -130,8 +129,14 @@ public class ListaView extends JPanel {
             foryoup.add(listaLabel);
             options.add(foryoup);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
+            foryoup.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Main.window.show("FORYOU");
+                }
+            });
         }
 
         {
@@ -150,7 +155,7 @@ public class ListaView extends JPanel {
             listp.add(listaLabel);
             options.add(listp);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
         }
 
@@ -164,10 +169,8 @@ public class ListaView extends JPanel {
     }
 
     DefaultListModel<Movie> listaModel = new DefaultListModel<>();
-    DefaultListModel<Movie> watchedModel = new DefaultListModel<>();
-    DefaultListModel<Movie> favoritedModel = new DefaultListModel<>();
-    Map<Genre, DefaultListModel<Movie>> genreList = new HashMap<>();
     Map<Genre, JList<Movie>> genreJList = new HashMap<>();
+    Map<Genre, DefaultListModel<Movie>> genreList = new HashMap<>();
 
     public JPanel getCenter() {
         JPanel content = new JPanel(new BorderLayout());
@@ -202,6 +205,7 @@ public class ListaView extends JPanel {
         conteudo.setBorder(new EmptyBorder(10, 10, 10, 0));
         BoxLayout box = new BoxLayout(conteudo, BoxLayout.Y_AXIS);
         conteudo.setLayout(box);
+        JList<Movie> populares;
 
         {
             JPanel lp1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -213,9 +217,8 @@ public class ListaView extends JPanel {
             lp1.add(l1);
             conteudo.add(lp1);
 
-            JList<Movie> populares = new JList<>(listaModel);
+            populares = new JList<>(listaModel);
             MouseListListener listener = new MouseListListener(populares);
-            listener.setConsumer((o) -> { return movieManager.getMoviesAndExclude(null, o); });
             mouseListeners.add(listener);
             populares.addMouseListener(listener);
             populares.addMouseMotionListener(listener);
@@ -224,7 +227,7 @@ public class ListaView extends JPanel {
             populares.setLayoutOrientation(JList.HORIZONTAL_WRAP);
             populares.setVisibleRowCount(1);
             populares.setCellRenderer(new CardCellRenderer());
-            genreJList.put(new Genre(-2, "Lista"), populares);
+            genreJList.put(new Genre(-1, "Populares"), populares);
 
             JScrollPane scrollPop = new JScrollPane(populares);
             listener.setScroll(scrollPop);
@@ -249,15 +252,68 @@ public class ListaView extends JPanel {
             conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
         }
 
-        /**
-         JList<Movie> watched = new JList<>(watchedModel);
-         watched.setCellRenderer(new CardCellRenderer());
+        {
+            watchManager.getWatchedMovies(AppInfo.ACCOUNT.getId()).forEach(m -> {
+                listaModel.addElement(m);
 
-         JList<Movie> favorited = new JList<>(favoritedModel);
-         favorited.setCellRenderer(new CardCellRenderer());
-         **/
+                DefaultListModel<Movie> mg = new DefaultListModel<>();
+                movieManager.getParecido(m).forEach(mv -> {
+                    mg.addElement(mv);
+                });
+                genreList.put(new Genre(-1, m.getName()), mg);
 
-        loadModels(conteudo);
+                JPanel lp2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                lp2.setBackground(SECOND_COLOR);
+                lp2.setBorder(new EmptyBorder(3, 3, 3, 3));
+                JLabel l2 = new JLabel("Parecido com " + m.getName() + ":");
+                l2.setBackground(SECOND_COLOR);
+                l2.setFont(l2.getFont().deriveFont(18f));
+                lp2.add(l2);
+                conteudo.add(lp2);
+
+                JList<Movie> genreList = new JList<>(mg);
+                MouseListListener listener = new MouseListListener(genreList);
+                listener.setConsumer((o) -> {
+                    return movieManager.getMovies(movieManager.getGenre(m.getId()));
+                });
+
+                mouseListeners.add(listener);
+                genreList.addMouseListener(listener);
+                genreList.addMouseMotionListener(listener);
+                genreList.setBorder(new EmptyBorder(0, 0, 0, 0));
+                genreList.setBackground(SECOND_COLOR);
+                genreList.setCellRenderer(new CardCellRenderer());
+                genreList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+                genreList.setVisibleRowCount(1);
+
+                genreJList.put(new Genre(-1, m.getName()), genreList);
+
+                JScrollPane genreScroll = new JScrollPane(genreList);
+                genreScroll.setPreferredSize(new Dimension(500, 200));
+                genreScroll.getHorizontalScrollBar().setUnitIncrement(16);
+                genreScroll.getVerticalScrollBar().setUnitIncrement(16);
+                genreScroll.addMouseWheelListener(e -> {
+                    Point p = scroll.getViewport().getViewPosition();
+                    p.y += (10 * e.getUnitsToScroll());
+                    if (p.y >= 0) {
+                        scroll.getViewport().setViewPosition(p);
+                    } else {
+                        p.y = 0;
+                        scroll.getViewport().setViewPosition(p);
+                    }
+                });
+                genreScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                genreScroll.setBorder(new EmptyBorder(0, 0, 0, 0));
+                genreScroll.setBackground(SECOND_COLOR);
+                listener.setScroll(genreScroll);
+                scrolls.add(genreScroll);
+
+                conteudo.add(genreScroll);
+                conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
+            });
+
+            populares.setModel(listaModel);
+        }
 
         scroll = new JScrollPane(conteudo);
         scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -267,68 +323,10 @@ public class ListaView extends JPanel {
         scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         content.add(scroll);
-        // outras listas
         return content;
     }
 
     private MovieManager movieManager = Main.movieManager;
     private WatchManager watchManager = Main.watchManager;
 
-    private void loadModels(JPanel conteudo) {
-        watchManager.getWatchedMovies(AppInfo.ACCOUNT.getId()).forEach(m -> {
-            listaModel.addElement(m);
-        });
-        /**
-        movieManager.getGenries().forEach(g -> {
-            DefaultListModel<Movie> mg = new DefaultListModel<>();
-            movieManager.getMovies(g).forEach(mg::addElement);
-            genreList.put(g, mg);
-
-            JPanel lp2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            lp2.setBackground(SECOND_COLOR);
-            lp2.setBorder(new EmptyBorder(3, 3, 3, 3));
-            JLabel l2 = new JLabel(g.getName() + ":");
-            l2.setBackground(SECOND_COLOR);
-            l2.setFont(l2.getFont().deriveFont(18f));
-            lp2.add(l2);
-            conteudo.add(lp2);
-
-            JList<Movie> genreList = new JList<>(mg);
-            MouseListListener listener = new MouseListListener(genreList);
-            mouseListeners.add(listener);
-            genreList.addMouseListener(listener);
-            genreList.addMouseMotionListener(listener);
-            genreList.setBorder(new EmptyBorder(0, 0, 0, 0));
-            genreList.setBackground(SECOND_COLOR);
-
-            genreList.setCellRenderer(new CardCellRenderer());
-            genreList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-            genreList.setVisibleRowCount(1);
-
-            genreJList.put(g, genreList);
-
-            JScrollPane genreScroll = new JScrollPane(genreList);
-            genreScroll.getHorizontalScrollBar().setUnitIncrement(16);
-            genreScroll.getVerticalScrollBar().setUnitIncrement(16);
-            genreScroll.addMouseWheelListener(e -> {
-                Point p = scroll.getViewport().getViewPosition();
-                p.y += (10 * e.getUnitsToScroll());
-                if (p.y >= 0) {
-                    scroll.getViewport().setViewPosition(p);
-                } else {
-                    p.y = 0;
-                    scroll.getViewport().setViewPosition(p);
-                }
-            });
-            genreScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            genreScroll.setBorder(new EmptyBorder(0, 0, 0, 0));
-            genreScroll.setBackground(SECOND_COLOR);
-            listener.setScroll(genreScroll);
-            scrolls.add(genreScroll);
-
-            conteudo.add(genreScroll);
-            conteudo.add(new JPanelLambda(new BorderLayout(), SECOND_COLOR));
-        });
-         **/
-    }
 }

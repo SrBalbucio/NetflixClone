@@ -20,4 +20,5 @@ public class AppInfo {
     public static boolean LOGGED = false;
     public static Account ACCOUNT = new Account("-1", "DEVELOPER", "dev@dev.com", "");
     public static boolean USE_LOGIN = true; // autorizar login
+    public static boolean LOAD_RPC = false;
 }

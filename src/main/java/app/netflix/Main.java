@@ -6,6 +6,7 @@ import app.netflix.manager.WatchManager;
 import app.netflix.model.Account;
 import balbucio.discordoauth.DiscordOAuth;
 import balbucio.discordoauth.scope.SupportedScopes;
+import balbucio.responsivescheduler.RSTask;
 import balbucio.responsivescheduler.ResponsiveScheduler;
 import balbucio.sqlapi.sqlite.HikariSQLiteInstance;
 import balbucio.sqlapi.sqlite.SqliteConfig;
@@ -38,10 +39,16 @@ public class Main {
                 .choices("ON", "OFF")
                 .setDefault("ON")
                 .help("Ativa o login");
+        parser.addArgument("--discordrpc")
+                .help("Ativa o DiscordRPC");
         Namespace ns = parser.parseArgs(args);
 
-        if(ns.getAttrs().containsKey("--login")){
-            AppInfo.USE_LOGIN = ns.getString("--login").equalsIgnoreCase("ON");
+        if(ns.getAttrs().containsKey("login")){
+            AppInfo.USE_LOGIN = ns.getString("login").equalsIgnoreCase("ON");
+        }
+
+        if(ns.getAttrs().containsKey("discordrpc")){
+            AppInfo.LOAD_RPC = true;
         }
 
         new Main();
@@ -55,6 +62,7 @@ public class Main {
     public static HikariSQLiteInstance sqlite;
     public static DiscordOAuth discordOAuth;
     public static boolean firstLoad = true;
+    public static boolean allLoaded = true;
     public static Window window;
     public static MovieManager movieManager;
     public static AccountManager accountManager;
@@ -80,7 +88,12 @@ public class Main {
 
         window = new Window();
 
-        //loadDiscordRPC();
+        if(AppInfo.LOAD_RPC) {
+            System.out.println("*** AVISO IMPORTANTE ***\n" +
+                    "O DiscordRPC foi ativado, tentaremos conectar ao seu Discord pelo Aplicaito.\n" +
+                    "Caso o aplicativo feche imediatamente, DESATIVE esta feature.");
+            loadDiscordRPC();
+        }
 
         movieManager.loadAll();
 
@@ -128,7 +141,7 @@ public class Main {
 
     public static Core discordCore;
 
-    public void loadDiscordRPC() throws IOException {
+    public void loadDiscordRPC() {
         try {
             window.getLoadView().setLoadText("Loading native libraries and trying to connect you automatically...");
             Core.initFromClasspath();
@@ -138,13 +151,27 @@ public class Main {
             params.registerEventHandler(new DiscordEventAdapter() {
                 @Override
                 public void onCurrentUserUpdate() {
-                    AppInfo.LOGGED = true;
-                    DiscordUser currentUser = discordCore.userManager().getCurrentUser();
-                    accountManager.loadUser(currentUser);
-                    System.out.println("Atualizado!");
+                    if(!AppInfo.LOGGED) {
+                        AppInfo.LOGGED = true;
+                        DiscordUser currentUser = discordCore.userManager().getCurrentUser();
+                        accountManager.loadUser(currentUser);
+                        if(allLoaded){
+                            window.loadMainView();
+                        }
+                    }
+
                 }
             });
-            discordCore = new Core(params);
+
+            scheduler.runAsyncTask(new RSTask() {
+                @Override
+                public void run() {
+                    discordCore = new Core(params);
+                    while(true){
+                        discordCore.runCallbacks();
+                    }
+                }
+            });
         } catch (Exception e ){
             e.printStackTrace();
         }

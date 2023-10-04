@@ -45,6 +45,7 @@ public class MovieManager {
         loadPopularToday(1, true);
         Main.window.getLoadView().setLoadText("Loading the best films...");
         getGenries().forEach(this::discoverNewMovies);
+        Main.allLoaded = true;
     }
 
     public void loadPopularToday(int page, boolean next){
@@ -163,9 +164,30 @@ public class MovieManager {
 
     public List<Genre> getGenries() {
         List<Genre> genries = new ArrayList<>();
-        sqlite.getAllValuesFromColumns("genries").forEach(resultValue -> {
-            genries.add(new Genre(resultValue.asInt("id"), resultValue.asString("name")));
-        });
+        sqlite.getAllValuesFromColumns("genries").forEach(resultValue -> genries.add(new Genre(resultValue.asInt("id"), resultValue.asString("name"))));
         return genries;
+    }
+
+    public List<Movie> getParecido(Movie mv){
+        List<Movie> movies = new ArrayList<>();
+        api.getMovies().getSimilarMovies(mv.getId(), "pt-BR", 1).forEach(m -> {
+            if (!m.getOverview().isEmpty() && !m.getTitle().isEmpty()) {
+                JSONObject data = new JSONObject();
+                data.put("release", m.getReleaseDate());
+                data.put("vote", m.getVoteAverage());
+                data.put("voteCount", m.getVoteCount());
+                data.put("originalName", SanitizerUtils.clean(m.getOriginalTitle()));
+                Movie movie = new Movie(m.getId(), SanitizerUtils.clean(m.getTitle()), SanitizerUtils.clean(m.getOverview()), -1, m.getPopularity(), m.getPosterPath(), m.getBackdropPath(), data.toString());
+                movies.add(movie);
+            }
+        });
+        if(movies.size() < 10){
+            movies.addAll(getMovies(getGenre(mv.getGenre())));
+        }
+        return movies;
+    }
+
+    public Genre getGenre(int id){
+        return getGenries().stream().filter(g -> g.getId() == id).findAny().orElse(new Genre(28, "Ação"));
     }
 }

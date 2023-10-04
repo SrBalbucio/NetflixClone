@@ -38,7 +38,7 @@ public class AccountManager {
     public Account loadUser(User user) {
         String avatarHash = "";
         try {
-            File avatarFile = new File("cache/"+user.getId());
+            File avatarFile = new File("cache/"+user.getId()+".png");
             BufferedInputStream in = new BufferedInputStream(new URL("https://cdn.discordapp.com/avatars/" + user.getId() + "/" + user.getAvatar() + ".png").openStream());
             FileOutputStream fileOutputStream = new FileOutputStream(avatarFile);
             byte dataBuffer[] = new byte[1024];
@@ -59,9 +59,28 @@ public class AccountManager {
     }
 
     public Account loadUser(DiscordUser user) {
-        System.out.println(user.getAvatar());
-        Account acc = new Account(String.valueOf(user.getUserId()), user.getUsername(), "rpc@email.com", user.getAvatar());
+        String avatarHash = "";
+        try {
+            File avatarFile = new File("cache/"+user.getUserId()+".png");
+            if(!avatarFile.exists()) {
+                BufferedInputStream in = new BufferedInputStream(new URL("https://cdn.discordapp.com/avatars/" + user.getUserId() + "/" + user.getAvatar() + ".png").openStream());
+                FileOutputStream fileOutputStream = new FileOutputStream(avatarFile);
+                byte dataBuffer[] = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+                }
+                fileOutputStream.flush();
+                fileOutputStream.close();
+                byte[] fileContent = FileUtils.readFileToByteArray(avatarFile);
+                avatarHash = Base64.getEncoder().encodeToString(fileContent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Account acc = new Account(String.valueOf(user.getUserId()), user.getUsername(), "rpc@email.com", avatarHash);
         sqlite.replace("id, name, email, avatarHash", "'" + acc.getId() + "', '" + acc.getUsername() + "','" + acc.getEmail() + "', ''", "account");
+        Main.setConfig("loggedId", acc.getId());
         return acc;
     }
 

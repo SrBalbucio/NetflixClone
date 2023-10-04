@@ -31,31 +31,31 @@ public class CardCellRenderer implements ListCellRenderer<Movie> {
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Movie> list, Movie value, int index, boolean isSelected, boolean cellHasFocus) {
-        if(isSelected && list.getCursor() != AppInfo.LEFT_CURSOR && list.getCursor() != AppInfo.RIGHT_CURSOR){
+        if (isSelected && list.getCursor() != AppInfo.LEFT_CURSOR && list.getCursor() != AppInfo.RIGHT_CURSOR) {
             list.clearSelection();
             Main.window.getContent().add(new MovieView(value), String.valueOf(value.getId()));
             Main.window.show(String.valueOf(value.getId()));
         }
         JPanel panel = new JPanel(new BorderLayout());
         try {
-            if (list.isShowing()) {
-                if (index >= f && e >= index) {
-                    if (!CACHED_COMP.containsKey(value.getId())) {
-                        panel = new JPanel(new BorderLayout());
-                        panel.setBackground(SECOND_COLOR);
-                        panel.setPreferredSize(new Dimension(150, 200));
-                        panel.setBorder(new EmptyBorder(3, 3, 3, 3));
-                        JImage image = new JImage(value.getPosterImage());
-                        image.setPreferredSize(new Dimension(147, 297));
-                        image.setCenter(true);
-                        panel.add(image, BorderLayout.CENTER);
-                        CACHED_COMP.put(value.getId(), panel);
-                    } else {
-                        panel = CACHED_COMP.get(value.getId());
-                    }
+            if (index >= f && e >= index) {
+                if (!CACHED_COMP.containsKey(value.getId())) {
+                    panel = new JPanel(new BorderLayout());
+                    panel.setBackground(SECOND_COLOR);
+                    panel.setPreferredSize(new Dimension(150, 200));
+                    panel.setBorder(new EmptyBorder(3, 3, 3, 3));
+                    JImage image = new JImage(value.getPosterImage());
+                    image.setPreferredSize(new Dimension(147, 297));
+                    image.setCenter(true);
+                    panel.add(image, BorderLayout.CENTER);
+                    CACHED_COMP.put(value.getId(), panel);
+                } else {
+                    panel = CACHED_COMP.get(value.getId());
                 }
+
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         return panel;
     }
 
