@@ -49,6 +49,7 @@ public class PlayerView extends JFXPanel {
             mediaPlayer.setOnStopped(e);
             mediaPlayer.setOnPaused(e);
             mediaPlayer.setOnReady(a);
+            Runnable eb = e;
             this.addComponentListener(new ComponentAdapter() {
                 @Override
                 public void componentResized(ComponentEvent e) {
@@ -67,6 +68,10 @@ public class PlayerView extends JFXPanel {
                 public void keyTyped(KeyEvent e) {
                     if(e.getKeyChar() == 'e'){
                         mediaPlayer.stop();
+                        eb.run();
+                    } else if(e.getKeyChar() == 'r'){
+                        mediaPlayer.stop();
+                        Main.window.show("HOME");
                     }
                 }
             });

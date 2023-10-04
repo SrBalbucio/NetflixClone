@@ -45,6 +45,7 @@ public class Window extends GlassFrame {
         content.add(mainView, "HOME");
         content.add(listaView, "LISTA");
         content.add(forYouView, "FORYOU");
+        long startLoading = System.currentTimeMillis();
         PlayerView view = new PlayerView(new Media(new File("trailer01.mp4").toURI().toString()), () -> {
             Main.window.show("HOME");
             Main.allLoaded = true;
@@ -52,6 +53,9 @@ public class Window extends GlassFrame {
           show("NETFLIXLOAD");
         });
         content.add(view, "NETFLIXLOAD");
+        if((startLoading - System.currentTimeMillis())> 6000){
+            show("NETFLIXLOAD");
+        }
     }
 
     public void show(String page) {
