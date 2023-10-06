@@ -52,7 +52,6 @@ public class CardCellRenderer implements ListCellRenderer<Movie> {
                 } else {
                     panel = CACHED_COMP.get(value.getId());
                 }
-
             }
         } catch (Exception e) {
         }

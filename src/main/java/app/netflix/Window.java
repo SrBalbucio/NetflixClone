@@ -10,6 +10,8 @@ import lombok.Getter;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class Window extends GlassFrame {
 
@@ -46,6 +48,17 @@ public class Window extends GlassFrame {
         content.add(listaView, "LISTA");
         content.add(forYouView, "FORYOU");
         long startLoading = System.currentTimeMillis();
+        int i = 4;
+        for (int i1 = 1; i1 < i; i1++) {
+            File trailer = new File("trailer0" + i1 + ".mp4");
+            if (!trailer.exists()) {
+                try {
+                    Files.copy(this.getClass().getResourceAsStream("/trailer/trailer0" + i1 + ".mp4"), trailer.toPath());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
         PlayerView view = new PlayerView(new Media(new File("trailer01.mp4").toURI().toString()), () -> {
             Main.window.show("HOME");
             Main.allLoaded = true;
