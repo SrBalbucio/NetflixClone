@@ -41,6 +41,7 @@ public class Main {
                 .help("Ativa o login");
         parser.addArgument("--discordrpc")
                 .help("Ativa o DiscordRPC");
+
         Namespace ns = parser.parseArgs(args);
 
         if(ns.getAttrs().containsKey("login")){

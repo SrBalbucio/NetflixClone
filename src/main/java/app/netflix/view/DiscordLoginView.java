@@ -58,12 +58,10 @@ public class DiscordLoginView extends JPanel {
                 if (state == Worker.State.SCHEDULED || state == Worker.State.RUNNING || state == Worker.State.READY) {
                     System.out.println(browser.getEngine().getLocation());
                     if (browser.getEngine().getLocation().contains("netflixclone.com/netflix/discordlogin")) {
-                        System.out.println("abc1");
                         String[] urlPartener = browser.getEngine().getLocation().replace("https://netflixclone.com/netflix/discordlogin?", "").split("&");
                         for (String part : urlPartener) {
                             String[] p = part.split("=");
                             if (p[0].equalsIgnoreCase("code")) {
-                                System.out.println("abc");
                                 processCode(p[1]);
                             }
                         }

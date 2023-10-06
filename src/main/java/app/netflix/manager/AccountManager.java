@@ -86,6 +86,7 @@ public class AccountManager {
 
     public Account getAccount(String id) {
         Account account = new Account();
+        // SELECT * FROM ACCOUNT WHERE id = id;
         sqlite.getAllValuesFromColumns("account", new ConditionValue[]{new ConditionValue("id", Conditional.EQUALS, id, Operator.NULL)})
                 .stream().findFirst().ifPresent(r -> {
                     account.setId(r.asString("id"));
