@@ -59,14 +59,15 @@ public class Window extends GlassFrame {
                 }
             }
         }
-        PlayerView view = new PlayerView(new Media(new File("trailer01.mp4").toURI().toString()), () -> {
-            Main.window.show("HOME");
-            Main.allLoaded = true;
-        }, () -> {
-          show("NETFLIXLOAD");
+        PlayerView view = new PlayerView(new Media(new File("trailer01.mp4").toURI().toString()),
+                () -> {
+                    Main.window.show("HOME");
+                    Main.allLoaded = true;
+                }, () -> {
+            show("NETFLIXLOAD");
         });
         content.add(view, "NETFLIXLOAD");
-        if((startLoading - System.currentTimeMillis())> 6000){
+        if ((startLoading - System.currentTimeMillis()) > 6000) {
             show("NETFLIXLOAD");
         }
     }

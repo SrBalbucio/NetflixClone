@@ -210,6 +210,7 @@ public class MainView extends JPanel {
         BoxLayout box = new BoxLayout(conteudo, BoxLayout.Y_AXIS);
         conteudo.setLayout(box);
 
+
         JPanel lp1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         lp1.setBackground(SECOND_COLOR);
         lp1.setBorder(new EmptyBorder(3, 3, 3, 3));
