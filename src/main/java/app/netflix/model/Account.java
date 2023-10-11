@@ -20,7 +20,9 @@ public class Account {
 
     public Image getImage(){
         System.out.println(id);
-        return ImageUtils.getImage(new File("cache/"+id+".png"));
+        Image img = ImageUtils.getImage(new File("cache/"+id+".png"));
+
+        return ImageUtils.roundImage(img, 30);
     }
 
 }

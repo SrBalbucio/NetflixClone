@@ -9,6 +9,8 @@ import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,6 +49,14 @@ public class Window extends GlassFrame {
         content.add(mainView, "HOME");
         content.add(listaView, "LISTA");
         content.add(forYouView, "FORYOU");
+        loadView.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(e.getKeyChar() == 'p'){
+                    show("NETFLIXLOAD");
+                }
+            }
+        });
         long startLoading = System.currentTimeMillis();
         int i = 4;
         for (int i1 = 1; i1 < i; i1++) {
@@ -67,7 +77,7 @@ public class Window extends GlassFrame {
             show("NETFLIXLOAD");
         });
         content.add(view, "NETFLIXLOAD");
-        if ((startLoading - System.currentTimeMillis()) > 6000) {
+        if ((System.currentTimeMillis()- startLoading) > 20000) {
             show("NETFLIXLOAD");
         }
     }

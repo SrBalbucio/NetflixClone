@@ -173,6 +173,15 @@ public class MainView extends JPanel {
         capsulaOptions.add(options, BorderLayout.NORTH);
         content.add(capsulaOptions, BorderLayout.CENTER);
         JPanel acc = new JPanel(new GridBagLayout());
+        acc.setBackground(new Color(0,0,0,0));
+        JPanel accPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        accPanel.setBackground(new Color(0,0,0,0));
+        JImage image = new JImage(AppInfo.ACCOUNT.getImage());
+        image.setCenter(true);
+        image.setPreferredSize(new Dimension(32, 32));
+        accPanel.add(image);
+        accPanel.add(new JLabel(AppInfo.ACCOUNT.getUsername()));
+        acc.add(accPanel);
         content.add(acc, BorderLayout.SOUTH);
 
         return content;

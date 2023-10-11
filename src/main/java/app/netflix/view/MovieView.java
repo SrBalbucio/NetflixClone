@@ -127,8 +127,18 @@ public class MovieView extends JPanel {
         capsulaOptions.setBackground(FIRST_COLOR);
         capsulaOptions.add(options, BorderLayout.NORTH);
         content.add(capsulaOptions, BorderLayout.CENTER);
-        JPanel extraPanel = new JPanel(new BorderLayout());
-        content.add(extraPanel, BorderLayout.SOUTH);
+
+        JPanel acc = new JPanel(new GridBagLayout());
+        acc.setBackground(new Color(0,0,0,0));
+        JPanel accPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        accPanel.setBackground(new Color(0,0,0,0));
+        JImage image = new JImage(AppInfo.ACCOUNT.getImage());
+        image.setCenter(true);
+        image.setPreferredSize(new Dimension(32, 32));
+        accPanel.add(image);
+        accPanel.add(new JLabel(AppInfo.ACCOUNT.getUsername()));
+        acc.add(accPanel);
+        content.add(acc, BorderLayout.SOUTH);
 
         return content;
     }
@@ -308,6 +318,8 @@ public class MovieView extends JPanel {
             }
             capsula.add(south, BorderLayout.SOUTH);
             content.add(capsula, BorderLayout.CENTER);
+
+
         }
         content.setPreferredSize(new Dimension(this.getWidth(), 700));
         return content;

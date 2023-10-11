@@ -162,7 +162,18 @@ public class ForYouView extends JPanel {
         capsulaOptions.setBackground(FIRST_COLOR);
         capsulaOptions.add(options, BorderLayout.NORTH);
         content.add(capsulaOptions, BorderLayout.CENTER);
-        content.add(new JPanel(), BorderLayout.SOUTH);
+
+        JPanel acc = new JPanel(new GridBagLayout());
+        acc.setBackground(new Color(0,0,0,0));
+        JPanel accPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        accPanel.setBackground(new Color(0,0,0,0));
+        JImage image = new JImage(AppInfo.ACCOUNT.getImage());
+        image.setCenter(true);
+        image.setPreferredSize(new Dimension(32, 32));
+        accPanel.add(image);
+        accPanel.add(new JLabel(AppInfo.ACCOUNT.getUsername()));
+        acc.add(accPanel);
+        content.add(acc, BorderLayout.SOUTH);
 
         return content;
     }
