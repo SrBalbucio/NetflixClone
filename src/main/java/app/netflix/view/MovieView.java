@@ -5,6 +5,7 @@ import app.netflix.Icons;
 import app.netflix.Main;
 import app.netflix.lib.JPanelLambda;
 import app.netflix.model.Movie;
+import app.netflix.utils.GraphicsUtils;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.component.panel.JCornerPanel;
 import balbucio.org.ejsl.utils.ImageUtils;
@@ -138,25 +139,18 @@ public class MovieView extends JPanel {
         JPanel content = new JPanel(){
             @Override
             protected void paintComponent(Graphics g) {
-                System.out.println(this.getHeight());
                 Graphics2D g2 = (Graphics2D) g.create();
                 RenderingHints rh = new RenderingHints(
                         RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g2.setRenderingHints(rh);
                 Image original = movie.getBackdropImage();
-                Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
-                g2.drawImage(image, 0,0,this.getWidth(), this.getHeight(), SECOND_COLOR, null);
+                //Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
+                g2.drawImage(original, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
 
-                g2.setColor(new Color(18, 18, 29, 60));
-                g2.setBackground(new Color(18, 18, 29, 40));
-                g2.fillRect(0, 0, this.getWidth() / 3, this.getHeight());
-
-                g2.setColor(new Color(18, 18, 29, 60));
-                g2.setBackground(new Color(18, 18, 29, 60));
-                g2.fillRect(0, 0, this.getWidth() / 2, this.getHeight());
+                GraphicsUtils.fillGradientRect(g2, Color.BLACK, new Color(0, 0, 0, 0), 0, 0, this.getWidth(), this.getHeight());
             }
-        };
+        };;
         content.setBorder(new EmptyBorder(40,40,40,40));
         content.setLayout(new BorderLayout());
         content.setBackground(new Color(0,0,0,0));;

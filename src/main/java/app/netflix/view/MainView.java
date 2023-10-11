@@ -11,9 +11,11 @@ import app.netflix.listener.WheelListener;
 import app.netflix.manager.MovieManager;
 import app.netflix.model.Genre;
 import app.netflix.model.Movie;
+import app.netflix.utils.GraphicsUtils;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.component.panel.JCornerPanel;
 import balbucio.org.ejsl.utils.ImageUtils;
+import javafx.scene.media.Media;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -21,9 +23,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class MainView extends JPanel {
 
@@ -104,7 +110,7 @@ public class MainView extends JPanel {
             homep.add(homeLabel);
             options.add(homep);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
         }
 
@@ -124,7 +130,7 @@ public class MainView extends JPanel {
             foryoup.add(listaLabel);
             options.add(foryoup);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
             foryoup.addMouseListener(new MouseAdapter() {
                 @Override
@@ -150,7 +156,7 @@ public class MainView extends JPanel {
             listp.add(listaLabel);
             options.add(listp);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
             listp.addMouseListener(new MouseAdapter() {
                 @Override
@@ -175,6 +181,7 @@ public class MainView extends JPanel {
     DefaultListModel<Movie> favoritedModel = new DefaultListModel<>();
     Map<Genre, DefaultListModel<Movie>> genreList = new HashMap<>();
     Map<Genre, JList<Movie>> genreJList = new HashMap<>();
+    private boolean isPlayed = false;
 
     public JPanel getCenter() {
         JPanel content = new JPanel(new BorderLayout());
@@ -210,6 +217,134 @@ public class MainView extends JPanel {
         BoxLayout box = new BoxLayout(conteudo, BoxLayout.Y_AXIS);
         conteudo.setLayout(box);
 
+        /**
+         * FIRST ALTERATION
+         */
+
+        Movie featuredMovie = Main.movieManager.getFeaturedMovie();
+
+        JPanel mainMovie = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                RenderingHints rh = new RenderingHints(
+                        RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2.setRenderingHints(rh);
+                Image original = featuredMovie.getBackdropImage();
+                Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
+                g2.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
+
+                GraphicsUtils.fillGradientRect(g2, Color.BLACK, new Color(0, 0, 0, 0), 0, 0, this.getWidth(), this.getHeight());
+                g2.dispose();
+            }
+        };
+
+        mainMovie.setBackground(new Color(0,0,0,0));
+        mainMovie.setPreferredSize(new Dimension(700, 450));
+        mainMovie.setBorder(new EmptyBorder(10, 10,10,10));
+
+
+        JPanel info = new JPanel();
+        info.setBackground(new Color(0, 0, 0, 0));
+        BoxLayout bi = new BoxLayout(info, BoxLayout.Y_AXIS);
+        info.setLayout(bi);
+
+        JPanel tf = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        tf.setBackground(new Color(0, 0, 0, 0));
+        JLabel title = new JLabel(featuredMovie.getName());
+        title.setForeground(Color.WHITE);
+        title.setBackground(new Color(0, 0, 0, 0));
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 48f));
+        tf.add(title);
+
+        JPanel td = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        td.setPreferredSize(new Dimension(300, 120));
+        td.setBackground(new Color(0, 0, 0, 0));
+        JTextArea description = new JTextArea(featuredMovie.getDescription());
+        description.setFont(description.getFont().deriveFont(14f));
+        description.setEditable(false);
+        description.setPreferredSize(new Dimension(400, 300));
+        description.setBorder(new EmptyBorder(0, 0, 0, 0));
+        description.setLineWrap(true);
+        description.setWrapStyleWord(true);
+        description.setForeground(Color.WHITE);
+        description.setBackground(new Color(0, 0, 0, 0));
+        td.add(description);
+        info.add(tf);
+        info.add(td);
+        JPanel capsula = new JPanel(new BorderLayout()){
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                RenderingHints rh = new RenderingHints(
+                        RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2.setRenderingHints(rh);
+                Image original = featuredMovie.getBackdropImage();
+                //Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
+                g2.drawImage(original, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
+
+                GraphicsUtils.fillGradientRect(g2, Color.BLACK, new Color(0, 0, 0, 0), 0, 0, this.getWidth(), this.getHeight());
+            }
+        };
+        capsula.setBackground(new Color(0, 0, 0, 0));
+        capsula.add(info, BorderLayout.NORTH);
+        capsula.add(new JPanelLambda(new BorderLayout(), new Color(0, 0, 0, 0)), BorderLayout.CENTER);
+        JPanel south = new JPanel();
+        south.setBackground(new Color(0, 0, 0, 0));
+
+        {
+            JCornerPanel assistir = new JCornerPanel(Color.RED, 20);
+            assistir.setPreferredSize(new Dimension(200, 32));
+            assistir.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (!isPlayed) {
+                        Random random = new Random();
+                        Main.watchManager.addWatched(AppInfo.ACCOUNT.getId(), String.valueOf(featuredMovie.getId()));
+                        int i = 4;
+                        for (int i1 = 1; i1 < i; i1++) {
+                            File trailer = new File("trailer0" + i1 + ".mp4");
+                            if (!trailer.exists()) {
+                                try {
+                                    Files.copy(this.getClass().getResourceAsStream("/trailer/trailer0" + i1 + ".mp4"), trailer.toPath());
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
+                        int iv = random.nextInt(4);
+                        if (iv < 2) {
+                            iv = 2;
+                        }
+                        PlayerView view = new PlayerView(new Media(new File("trailer0" + iv + ".mp4").toURI().toString()), () -> {
+                            Main.window.show(featuredMovie.getName());
+                            assistir.setBackground(Color.RED);
+                        }, () -> {
+                            Main.window.show(featuredMovie.getName());
+                        });
+                        isPlayed = true;
+                        Main.window.getContent().add(view, featuredMovie.getName());
+                        assistir.setBackground(Color.DARK_GRAY);
+                    }
+                }
+            });
+
+            assistir.setLayout(new FlowLayout(FlowLayout.CENTER));
+            JImage backIcon = new JImage(Icons.PLAY);
+            backIcon.setCenter(true);
+            backIcon.setPreferredSize(new Dimension(24, 24));
+            assistir.add(backIcon);
+            JLabel label = new JLabel("Assistir");
+            label.setBackground(new Color(0, 0, 0, 0));
+            label.setFont(label.getFont().deriveFont(18f));
+            assistir.add(label);
+            south.add(assistir, BorderLayout.NORTH);
+        }
+        capsula.add(south, BorderLayout.SOUTH);
+        mainMovie.add(capsula, BorderLayout.CENTER);
+        conteudo.add(mainMovie);
 
         JPanel lp1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         lp1.setBackground(SECOND_COLOR);
@@ -222,7 +357,9 @@ public class MainView extends JPanel {
 
         JList<Movie> populares = new JList<>(popularesModel);
         MouseListListener listener = new MouseListListener(populares);
-        listener.setConsumer((o) -> { return movieManager.getMoviesAndExclude(null, o); });
+        listener.setConsumer((o) -> {
+            return movieManager.getMoviesAndExclude(null, o);
+        });
         mouseListeners.add(listener);
         populares.addMouseListener(listener);
         populares.addMouseMotionListener(listener);
@@ -288,7 +425,9 @@ public class MainView extends JPanel {
 
             JList<Movie> genreList = new JList<>(mg);
             MouseListListener listener = new MouseListListener(genreList);
-            listener.setConsumer((o) -> { return movieManager.getMoviesAndExclude(g, o); });
+            listener.setConsumer((o) -> {
+                return movieManager.getMoviesAndExclude(g, o);
+            });
             mouseListeners.add(listener);
             genreList.addMouseListener(listener);
             genreList.addMouseMotionListener(listener);

@@ -190,4 +190,11 @@ public class MovieManager {
     public Genre getGenre(int id){
         return getGenries().stream().filter(g -> g.getId() == id).findAny().orElse(new Genre(28, "Ação"));
     }
+
+    public Movie getFeaturedMovie(){
+        Random random = new Random();
+        List<Genre> genre = getGenries();
+        List<Movie> movies = getMovies(genre.get(random.nextInt(genre.size())));
+        return movies.get(random.nextInt(movies.size()));
+    }
 }
