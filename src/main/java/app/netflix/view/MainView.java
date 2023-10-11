@@ -15,6 +15,8 @@ import app.netflix.utils.GraphicsUtils;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.component.panel.JCornerPanel;
 import balbucio.org.ejsl.utils.ImageUtils;
+import balbucio.responsivescheduler.ResponsiveScheduler;
+import com.k33ptoo.components.KButton;
 import javafx.scene.media.Media;
 
 import javax.swing.*;
@@ -182,6 +184,7 @@ public class MainView extends JPanel {
     Map<Genre, DefaultListModel<Movie>> genreList = new HashMap<>();
     Map<Genre, JList<Movie>> genreJList = new HashMap<>();
     private boolean isPlayed = false;
+    private boolean accAlerted = false;
 
     public JPanel getCenter() {
         JPanel content = new JPanel(new BorderLayout());
@@ -213,7 +216,7 @@ public class MainView extends JPanel {
 
         JPanel conteudo = new JPanel();
         conteudo.setBackground(SECOND_COLOR);
-        conteudo.setBorder(new EmptyBorder(10, 10, 10, 0));
+        conteudo.setBorder(new EmptyBorder(5, 0, 10, 0));
         BoxLayout box = new BoxLayout(conteudo, BoxLayout.Y_AXIS);
         conteudo.setLayout(box);
 
@@ -232,8 +235,20 @@ public class MainView extends JPanel {
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g2.setRenderingHints(rh);
                 Image original = featuredMovie.getBackdropImage();
-                Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
-                g2.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
+                //Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
+                if(!original.getCapabilities(g2.getDeviceConfiguration()).isAccelerated() && !accAlerted){
+                    ResponsiveScheduler.run(() -> {
+                        Main.uiBooster.showConfirmDialog(
+                                "IMPORTANTE!\n" +
+                                        "Foi identificado que o app não está acelerado por GPU " +
+                                        "isto ocorre quando o Java está mal configurado. Não " +
+                                        "ativar a aceleração por hardware por causar engasgos " +
+                                        "e até má renderização de quadros. É importante que se " +
+                                        "possível seja ativado a aceleração por hardware do Java. ", "Aplicativo não acelerado!");
+                        accAlerted = true;
+                    });
+                }
+                g2.drawImage(original, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
 
                 GraphicsUtils.fillGradientRect(g2, Color.BLACK, new Color(0, 0, 0, 0), 0, 0, this.getWidth(), this.getHeight());
                 g2.dispose();
@@ -282,8 +297,8 @@ public class MainView extends JPanel {
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g2.setRenderingHints(rh);
                 Image original = featuredMovie.getBackdropImage();
-                //Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
-                g2.drawImage(original, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
+                Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
+                g2.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
 
                 GraphicsUtils.fillGradientRect(g2, Color.BLACK, new Color(0, 0, 0, 0), 0, 0, this.getWidth(), this.getHeight());
             }
@@ -295,12 +310,17 @@ public class MainView extends JPanel {
         south.setBackground(new Color(0, 0, 0, 0));
 
         {
-            JCornerPanel assistir = new JCornerPanel(Color.RED, 20);
-            assistir.setPreferredSize(new Dimension(200, 32));
+            KButton assistir = new KButton();
+            assistir.setkForeGround(Color.WHITE);
+            assistir.setText("Assistir");
+            assistir.setFont(assistir.getFont().deriveFont(Font.BOLD, 16f));
+            assistir.setkAllowGradient(true);
+            assistir.setkBorderRadius(20);
+            assistir.setkStartColor(new Color(235, 26, 88, 255));
+            assistir.setkEndColor(new Color(235, 26, 26, 255));
             assistir.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (!isPlayed) {
+                @Override public void mouseClicked(MouseEvent e) {
+                    if(!isPlayed) {
                         Random random = new Random();
                         Main.watchManager.addWatched(AppInfo.ACCOUNT.getId(), String.valueOf(featuredMovie.getId()));
                         int i = 4;
@@ -330,16 +350,6 @@ public class MainView extends JPanel {
                     }
                 }
             });
-
-            assistir.setLayout(new FlowLayout(FlowLayout.CENTER));
-            JImage backIcon = new JImage(Icons.PLAY);
-            backIcon.setCenter(true);
-            backIcon.setPreferredSize(new Dimension(24, 24));
-            assistir.add(backIcon);
-            JLabel label = new JLabel("Assistir");
-            label.setBackground(new Color(0, 0, 0, 0));
-            label.setFont(label.getFont().deriveFont(18f));
-            assistir.add(label);
             south.add(assistir, BorderLayout.NORTH);
         }
         capsula.add(south, BorderLayout.SOUTH);

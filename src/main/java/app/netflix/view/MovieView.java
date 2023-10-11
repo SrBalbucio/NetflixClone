@@ -9,6 +9,7 @@ import app.netflix.utils.GraphicsUtils;
 import balbucio.org.ejsl.component.JImage;
 import balbucio.org.ejsl.component.panel.JCornerPanel;
 import balbucio.org.ejsl.utils.ImageUtils;
+import com.k33ptoo.components.KButton;
 import javafx.scene.media.Media;
 
 import javax.swing.*;
@@ -78,7 +79,7 @@ public class MovieView extends JPanel {
             homep.add(homeLabel);
             options.add(homep);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
         }
 
@@ -98,7 +99,7 @@ public class MovieView extends JPanel {
             foryoup.add(listaLabel);
             options.add(foryoup);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
         }
 
@@ -118,7 +119,7 @@ public class MovieView extends JPanel {
             listp.add(listaLabel);
             options.add(listp);
             JPanel space = new JPanelLambda(new BorderLayout(), FIRST_COLOR);
-            space.setPreferredSize(new Dimension(10,15));
+            space.setPreferredSize(new Dimension(10, 15));
             options.add(space);
         }
 
@@ -134,9 +135,9 @@ public class MovieView extends JPanel {
 
     private boolean isPlayed = false;
 
-    public JPanel getCenter(){
+    public JPanel getCenter() {
         System.out.println(this.getHeight());
-        JPanel content = new JPanel(){
+        JPanel content = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -145,17 +146,19 @@ public class MovieView extends JPanel {
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g2.setRenderingHints(rh);
                 Image original = movie.getBackdropImage();
-                //Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
-                g2.drawImage(original, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
+                Image image = ImageUtils.setFitCenter(original, this.getWidth(), this.getHeight());
+                g2.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), SECOND_COLOR, null);
 
                 GraphicsUtils.fillGradientRect(g2, Color.BLACK, new Color(0, 0, 0, 0), 0, 0, this.getWidth(), this.getHeight());
             }
-        };;
-        content.setBorder(new EmptyBorder(40,40,40,40));
+        };
+        ;
+        content.setBorder(new EmptyBorder(40, 40, 40, 40));
         content.setLayout(new BorderLayout());
-        content.setBackground(new Color(0,0,0,0));;
+        content.setBackground(new Color(0, 0, 0, 0));
+        ;
         JPanel options = new JPanel(new BorderLayout());
-        options.setBackground(new Color(0,0,0,0));
+        options.setBackground(new Color(0, 0, 0, 0));
 
         {
             JCornerPanel voltar = new JCornerPanel(Color.DARK_GRAY, 20);
@@ -171,7 +174,7 @@ public class MovieView extends JPanel {
             backIcon.setPreferredSize(new Dimension(24, 24));
             voltar.add(backIcon);
             JLabel label = new JLabel("Voltar");
-            label.setBackground(new Color(0,0,0,0));
+            label.setBackground(new Color(0, 0, 0, 0));
             label.setFont(label.getFont().deriveFont(18f));
             voltar.add(label);
             options.add(voltar, BorderLayout.WEST);
@@ -179,46 +182,98 @@ public class MovieView extends JPanel {
         content.add(options, BorderLayout.NORTH);
         {
             JPanel info = new JPanel();
-            info.setBackground(new Color(0,0,0,0));
+            info.setBackground(new Color(0, 0, 0, 0));
             BoxLayout box = new BoxLayout(info, BoxLayout.Y_AXIS);
             info.setLayout(box);
 
             JPanel tf = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            tf.setBackground(new Color(0,0,0,0));
+            tf.setBackground(new Color(0, 0, 0, 0));
             JLabel title = new JLabel(movie.getName());
             title.setForeground(Color.WHITE);
-            title.setBackground(new Color(0,0,0,0));
+            title.setBackground(new Color(0, 0, 0, 0));
             title.setFont(title.getFont().deriveFont(Font.BOLD, 48f));
             tf.add(title);
 
             JPanel td = new JPanel(new FlowLayout(FlowLayout.LEFT));
             td.setPreferredSize(new Dimension(300, 120));
-            td.setBackground(new Color(0,0,0,0));
+            td.setBackground(new Color(0, 0, 0, 0));
             JTextArea description = new JTextArea(movie.getDescription());
             description.setFont(description.getFont().deriveFont(14f));
             description.setEditable(false);
             description.setPreferredSize(new Dimension(400, 300));
-            description.setBorder(new EmptyBorder(0,0,0,0));
+            description.setBorder(new EmptyBorder(0, 0, 0, 0));
             description.setLineWrap(true);
             description.setWrapStyleWord(true);
             description.setForeground(Color.WHITE);
-            description.setBackground(new Color(0,0,0,0));
+            description.setBackground(new Color(0, 0, 0, 0));
             td.add(description);
             info.add(tf);
             info.add(td);
             JPanel capsula = new JPanel(new BorderLayout());
-            capsula.setBackground(new Color(0,0,0,0));
+            capsula.setBackground(new Color(0, 0, 0, 0));
             capsula.add(info, BorderLayout.NORTH);
-            capsula.add(new JPanelLambda(new BorderLayout(), new Color(0,0,0,0)), BorderLayout.CENTER);
+            capsula.add(new JPanelLambda(new BorderLayout(), new Color(0, 0, 0, 0)), BorderLayout.CENTER);
             JPanel south = new JPanel();
-            south.setBackground(new Color(0,0,0,0));
-
+            south.setBackground(new Color(0, 0, 0, 0));
             {
-                JCornerPanel assistir = new JCornerPanel(Color.RED, 20);
-                assistir.setPreferredSize(new Dimension(200, 32));
+
+                /**
+
+                 {
+                 JCornerPanel assistir = new JCornerPanel(Color.RED, 20);
+                 assistir.setPreferredSize(new Dimension(200, 32));
+                 assistir.addMouseListener(new MouseAdapter() {
+                @Override public void mouseClicked(MouseEvent e) {
+                if(!isPlayed) {
+                Random random = new Random();
+                Main.watchManager.addWatched(AppInfo.ACCOUNT.getId(), String.valueOf(movie.getId()));
+                int i = 4;
+                for (int i1 = 1; i1 < i; i1++) {
+                File trailer = new File("trailer0" + i1 + ".mp4");
+                if (!trailer.exists()) {
+                try {
+                Files.copy(this.getClass().getResourceAsStream("/trailer/trailer0" + i1 + ".mp4"), trailer.toPath());
+                } catch (IOException ex) {
+                ex.printStackTrace();
+                }
+                }
+                }
+                int iv = random.nextInt(4);
+                if (iv < 2) {
+                iv = 2;
+                }
+                PlayerView view = new PlayerView(new Media(new File("trailer0" + iv + ".mp4").toURI().toString()), () -> {
+                Main.window.show(movie.getName());
+                assistir.setBackground(Color.RED);
+                }, () -> {
+                Main.window.show(movie.getName());
+                });
+                isPlayed = true;
+                Main.window.getContent().add(view, movie.getName());
+                assistir.setBackground(Color.DARK_GRAY);
+                }
+                }
+                });
+                 assistir.setLayout(new FlowLayout(FlowLayout.CENTER));
+                 JImage backIcon = new JImage(Icons.PLAY);
+                 backIcon.setCenter(true);
+                 backIcon.setPreferredSize(new Dimension(24, 24));
+                 assistir.add(backIcon);
+                 JLabel label = new JLabel("Assistir");
+                 label.setBackground(new Color(0,0,0,0));
+                 label.setFont(label.getFont().deriveFont(18f));
+                 assistir.add(label);
+                 **/
+                KButton assistir = new KButton();
+                assistir.setkForeGround(Color.WHITE);
+                assistir.setText("Assistir");
+                assistir.setFont(assistir.getFont().deriveFont(Font.BOLD, 16f));
+                assistir.setkAllowGradient(true);
+                assistir.setkBorderRadius(20);
+                assistir.setkStartColor(new Color(235, 26, 88, 255));
+                assistir.setkEndColor(new Color(235, 26, 26, 255));
                 assistir.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
+                    @Override public void mouseClicked(MouseEvent e) {
                         if(!isPlayed) {
                             Random random = new Random();
                             Main.watchManager.addWatched(AppInfo.ACCOUNT.getId(), String.valueOf(movie.getId()));
@@ -249,15 +304,6 @@ public class MovieView extends JPanel {
                         }
                     }
                 });
-                assistir.setLayout(new FlowLayout(FlowLayout.CENTER));
-                JImage backIcon = new JImage(Icons.PLAY);
-                backIcon.setCenter(true);
-                backIcon.setPreferredSize(new Dimension(24, 24));
-                assistir.add(backIcon);
-                JLabel label = new JLabel("Assistir");
-                label.setBackground(new Color(0,0,0,0));
-                label.setFont(label.getFont().deriveFont(18f));
-                assistir.add(label);
                 south.add(assistir, BorderLayout.NORTH);
             }
             capsula.add(south, BorderLayout.SOUTH);

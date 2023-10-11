@@ -95,6 +95,11 @@
             <artifactId>jna-platform</artifactId>
             <version>5.13.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.k33ptoo</groupId>
+            <artifactId>KControls</artifactId>
+            <version>74bb015155</version>
+        </dependency>
 
         <!--
 Este projeto usa JavaFX para criar o WebView, utilize um JDK com suporte ao JFX.
